@@ -21,10 +21,15 @@ export const viPIio = {
         };
     },
 
+    vec92() {
+        return 92; // √8472 ≈ 92 → echter GENtech‑Vektor
+    },
+
     start() {
         const f = this.founder();
         const r = this.rawator();
-        return { founder: f, rawator: r };
+        const v = this.vec92();
+
+        return { founder: f, rawator: r, vec92: v };
     }
 };
-
