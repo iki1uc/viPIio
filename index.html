@@ -3,19 +3,25 @@
 <head>
 <meta charset="utf-8">
 <title>viPIio Gründer</title>
+
 <script type="module">
     import { viPIio } from "./start.js";
 
     window.addEventListener("DOMContentLoaded", () => {
         const out = viPIio.start();
-        console.log(out);
+        console.log("DEMN START:", out);
+
         document.getElementById("root").innerText =
-            "viPIio Gründer aktiv\nRAWATOR gestartet\nBlock: " + out.rawator.block;
+            "viPIio Gründer aktiv\n" +
+            "RAWATOR gestartet\n" +
+            "Block: " + out.rawator.block + "\n" +
+            "VEC92: " + out.vec92 + "\n" +
+            "iki1uc: INFORMED";
     });
 </script>
+
 </head>
 <body>
 <pre id="root"></pre>
 </body>
 </html>
-
