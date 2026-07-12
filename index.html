@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
 <meta charset="utf-8">
 <title>viPIio Gründer</title>
@@ -9,9 +9,9 @@
 
     window.addEventListener("DOMContentLoaded", () => {
         const out = viPIio.start();
-        console.log("DEMN START:", out);
 
-        document.getElementById("root").innerText =
+        const root = document.getElementById("root");
+        root.textContent =
             "viPIio Gründer aktiv\n" +
             "RAWATOR gestartet\n" +
             "Block: " + out.rawator.block + "\n" +
@@ -22,6 +22,6 @@
 
 </head>
 <body>
-<pre id="root"></pre>
+<pre id="root">Lade…</pre>
 </body>
 </html>
