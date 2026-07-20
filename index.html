@@ -20,6 +20,7 @@
 <h1>VEC.tor – PQ / PX / PR Routing</h1>
 <p>Dieses Modul lädt <strong>VEC.tor</strong> direkt aus deinem Repo und führt Vector‑Routing aus.</p>
 
+<!-- WICHTIG: Beide Ausgabefelder müssen existieren -->
 <pre id="output">Lade VEC.tor…</pre>
 <pre id="root">Lade 4u.link…</pre>
 
@@ -28,7 +29,6 @@
 <script type="module">
     import VEC from "./VEC.tor";
 
-    // System-Bindung
     const System = {
         vec: VEC,
         route(from, to, data) {
@@ -37,14 +37,12 @@
         }
     };
 
-    // UI-Test
     document.getElementById("testBtn").onclick = () => {
         const result = System.route("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
         document.getElementById("output").textContent =
             JSON.stringify(result, null, 2);
     };
 
-    // Initialstatus
     document.getElementById("output").textContent =
         "VEC.tor geladen\n" +
         "PQ / PX / PR bereit\n" +
@@ -54,14 +52,12 @@
 <script type="module">
     import VEC from "./VEC.tor";
 
-    // 4u.link – NC‑like Kontaktkern für viPIio
     const FourULink = {
         matrix: "4u.matrix",
         filter: "4u.filter",
         upstream: "4u.upstream",
         slots: "4u.slots",
 
-        // Vector‑Kontakt: PQ / PX / PR
         contact() {
             return {
                 PX: VEC.PX,
@@ -73,7 +69,6 @@
             };
         },
 
-        // KI‑Scan: findet IMMER einen Kontakt
         scan() {
             const c = this.contact();
             return {
@@ -88,7 +83,6 @@
             };
         },
 
-        // NC‑like Status
         status() {
             return {
                 link: "4u.link",
@@ -100,13 +94,11 @@
         }
     };
 
-    // viPIio Integration
     window.addEventListener("DOMContentLoaded", () => {
         const scan = FourULink.scan();
         const status = FourULink.status();
 
-        const root = document.getElementById("root");
-        root.textContent =
+        document.getElementById("root").textContent =
             "viPIio – Kontaktkern aktiv\n" +
             "4u.link: " + status.link + "\n" +
             "Channel: " + scan.channel + "\n" +
