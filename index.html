@@ -2,26 +2,53 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<title>viPIio Gründer</title>
+<title>VEC.tor – PQ / PX / PR Routing</title>
+
+<style>
+    body { background:#0a0a0a; color:#e0e0e0; font-family:Consolas, monospace; padding:20px; }
+    h1 { color:#00e0ff; }
+    pre { background:#111; padding:15px; border-left:4px solid #00e0ff; }
+    button {
+        background:#00e0ff; border:none; padding:10px 20px;
+        font-family:Consolas; cursor:pointer; margin-top:10px;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>VEC.tor – PQ / PX / PR Routing</h1>
+<p>Dieses Modul lädt <strong>VEC.tor</strong> direkt aus deinem Repo und führt Vector‑Routing aus.</p>
+
+<pre id="output">Lade VEC.tor…</pre>
+
+<button id="testBtn">Vector-Test ausführen</button>
 
 <script type="module">
-    import { viPIio } from "./start.js";
+    import VEC from "./VEC.tor";
 
-    window.addEventListener("DOMContentLoaded", () => {
-        const out = viPIio.start();
+    // System-Bindung
+    const System = {
+        vec: VEC,
+        route(from, to, data) {
+            const packet = this.vec.send(from, to, data);
+            return this.vec.recv(packet);
+        }
+    };
 
-        const root = document.getElementById("root");
-        root.textContent =
-            "viPIio Gründer aktiv\n" +
-            "RAWATOR gestartet\n" +
-            "Block: " + out.rawator.block + "\n" +
-            "VEC92: " + out.vec92 + "\n" +
-            "iki1uc: INFORMED";
-    });
+    // UI-Test
+    document.getElementById("testBtn").onclick = () => {
+        const result = System.route("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
+        document.getElementById("output").textContent =
+            JSON.stringify(result, null, 2);
+    };
+
+    // Initialstatus
+    document.getElementById("output").textContent =
+        "VEC.tor geladen\n" +
+        "PQ / PX / PR bereit\n" +
+        "Routing aktiv";
 </script>
 
-</head>
-<body>
-<pre id="root">Lade…</pre>
 </body>
 </html>
