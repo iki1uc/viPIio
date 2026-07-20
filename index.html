@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<title>VEC.tor – PQ / PX / PR Routing</title>
+<title>RUN8 – VEC.tor + 4u.link + PQ/PX/PR</title>
 
 <style>
     body { background:#0a0a0a; color:#e0e0e0; font-family:Consolas, monospace; padding:20px; }
@@ -17,62 +17,30 @@
 
 <body>
 
-<h1>VEC.tor – PQ / PX / PR Routing</h1>
-<p>Dieses Modul lädt <strong>VEC.tor</strong> direkt aus deinem Repo und führt Vector‑Routing aus.</p>
+<h1>RUN8 – Systemstatus</h1>
+<p>Alle Module verbunden: VEC.tor • 4u.link • PQ/PX/PR • viPIio</p>
 
-<!-- WICHTIG: Beide Ausgabefelder müssen existieren -->
-<pre id="output">Lade VEC.tor…</pre>
-<pre id="root">Lade 4u.link…</pre>
+<pre id="run8">RUN8 wird geladen…</pre>
 
-<button id="testBtn">Vector-Test ausführen</button>
+<button id="testBtn">Vector-Test PQ → PX</button>
 
 <script type="module">
     import VEC from "./VEC.tor";
 
-    const System = {
-        vec: VEC,
-        route(from, to, data) {
-            const packet = this.vec.send(from, to, data);
-            return this.vec.recv(packet);
-        }
-    };
-
-    document.getElementById("testBtn").onclick = () => {
-        const result = System.route("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
-        document.getElementById("output").textContent =
-            JSON.stringify(result, null, 2);
-    };
-
-    document.getElementById("output").textContent =
-        "VEC.tor geladen\n" +
-        "PQ / PX / PR bereit\n" +
-        "Routing aktiv";
-</script>
-
-<script type="module">
-    import VEC from "./VEC.tor";
-
+    // 4u.link – Kontaktkern
     const FourULink = {
-        matrix: "4u.matrix",
-        filter: "4u.filter",
-        upstream: "4u.upstream",
-        slots: "4u.slots",
-
         contact() {
             return {
                 PX: VEC.PX,
                 PQ: VEC.PQ,
                 PR: VEC.PR,
-                active: true,
                 channel: VEC.channel,
                 time: Date.now()
             };
         },
-
         scan() {
             const c = this.contact();
             return {
-                found: true,
                 devices: {
                     PX: c.PX.id,
                     PQ: c.PQ.id,
@@ -81,33 +49,35 @@
                 channel: c.channel,
                 timestamp: c.time
             };
-        },
-
-        status() {
-            return {
-                link: "4u.link",
-                vec: "active",
-                upstream: this.upstream,
-                slots: this.slots,
-                ready: true
-            };
         }
     };
 
-    window.addEventListener("DOMContentLoaded", () => {
+    // RUN8 – alles zusammenführen
+    function RUN8() {
         const scan = FourULink.scan();
-        const status = FourULink.status();
 
-        document.getElementById("root").textContent =
-            "viPIio – Kontaktkern aktiv\n" +
-            "4u.link: " + status.link + "\n" +
+        document.getElementById("run8").textContent =
+            "RUN8 aktiv\n" +
             "Channel: " + scan.channel + "\n" +
             "Geräte erkannt:\n" +
             "  PX (Apple):  " + scan.devices.PX + "\n" +
             "  PQ (Laptop): " + scan.devices.PQ + "\n" +
             "  PR (PC):     " + scan.devices.PR + "\n" +
-            "Status: bereit";
-    });
+            "Status: System verbunden";
+    }
+
+    RUN8();
+
+    // Vector-Test
+    document.getElementById("testBtn").onclick = () => {
+        const packet = VEC.send("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
+        const result = VEC.recv(packet);
+
+        document.getElementById("run8").textContent =
+            "RUN8 aktiv\n" +
+            "Vector-Test:\n" +
+            JSON.stringify(result, null, 2);
+    };
 </script>
 
 </body>
