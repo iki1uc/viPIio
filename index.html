@@ -2,82 +2,131 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<title>RUN8 – VEC.tor + 4u.link + PQ/PX/PR</title>
+<title>viPIio – Handy Dashboard</title>
 
 <style>
-    body { background:#0a0a0a; color:#e0e0e0; font-family:Consolas, monospace; padding:20px; }
-    h1 { color:#00e0ff; }
-    pre { background:#111; padding:15px; border-left:4px solid #00e0ff; }
-    button {
-        background:#00e0ff; border:none; padding:10px 20px;
-        font-family:Consolas; cursor:pointer; margin-top:10px;
+    body {
+        background:#0a0a0a;
+        color:#e0e0e0;
+        font-family:Consolas, monospace;
+        margin:0;
+        padding:0;
+    }
+
+    .header {
+        background:#00e0ff;
+        color:#000;
+        padding:20px;
+        text-align:center;
+        font-size:22px;
+        font-weight:bold;
+    }
+
+    .section {
+        padding:20px;
+        border-bottom:1px solid #222;
+    }
+
+    .device {
+        background:#111;
+        padding:15px;
+        margin-top:10px;
+        border-left:4px solid #00e0ff;
+        border-radius:6px;
+    }
+
+    .device img {
+        width:100%;
+        max-width:250px;
+        border:2px solid #00e0ff;
+        border-radius:6px;
+        margin-top:10px;
+    }
+
+    .btn {
+        background:#00e0ff;
+        color:#000;
+        padding:12px 20px;
+        border:none;
+        border-radius:6px;
+        font-size:16px;
+        margin-top:10px;
+        width:100%;
+        cursor:pointer;
     }
 </style>
 </head>
 
 <body>
 
-<h1>RUN8 – Systemstatus</h1>
-<p>Alle Module verbunden: VEC.tor • 4u.link • PQ/PX/PR • viPIio</p>
+<div class="header">viPIio – PX Handy Dashboard</div>
 
-<pre id="run8">RUN8 wird geladen…</pre>
+<div class="section">
+    <h2>PX – Apple (Handy)</h2>
+    <div class="device">
+        <p>Status: aktiv</p>
+        <p>Modus: Mobile</p>
+        <img src="https://iki1uc.github.io/viPIio/logo.png">
+    </div>
+</div>
 
-<button id="testBtn">Vector-Test PQ → PX</button>
+<div class="section">
+    <h2>System‑Status</h2>
+    <div class="device" id="sys-status">
+        Lädt…
+    </div>
+</div>
 
-<script type="module">
-    import VEC from "./VEC.tor";
+<div class="section">
+    <h2>Geräte</h2>
 
-    // 4u.link – Kontaktkern
-    const FourULink = {
-        contact() {
-            return {
-                PX: VEC.PX,
-                PQ: VEC.PQ,
-                PR: VEC.PR,
-                channel: VEC.channel,
-                time: Date.now()
-            };
-        },
-        scan() {
-            const c = this.contact();
-            return {
-                devices: {
-                    PX: c.PX.id,
-                    PQ: c.PQ.id,
-                    PR: c.PR.id
-                },
-                channel: c.channel,
-                timestamp: c.time
-            };
-        }
-    };
+    <div class="device">
+        <h3>PQ – Laptop</h3>
+        <p id="pq-status">Lädt…</p>
+    </div>
 
-    // RUN8 – alles zusammenführen
-    function RUN8() {
-        const scan = FourULink.scan();
+    <div class="device">
+        <h3>PR – PC</h3>
+        <p id="pr-status">Lädt…</p>
+    </div>
+</div>
 
-        document.getElementById("run8").textContent =
-            "RUN8 aktiv\n" +
-            "Channel: " + scan.channel + "\n" +
-            "Geräte erkannt:\n" +
-            "  PX (Apple):  " + scan.devices.PX + "\n" +
-            "  PQ (Laptop): " + scan.devices.PQ + "\n" +
-            "  PR (PC):     " + scan.devices.PR + "\n" +
-            "Status: System verbunden";
+<div class="section">
+    <button class="btn" onclick="testVector()">Vector‑Test PQ → PX</button>
+</div>
+
+<script>
+/* PX‑Handy Dashboard – KEINE MODULE, KEINE IMPORTS */
+
+const VEC = {
+    channel: "RUN8-CHANNEL",
+
+    PX: { id:"PX-APPLE", type:"APPLE", state:"ready" },
+    PQ: { id:"PQ-LAPTOP", type:"LAPTOP", state:"ready", text:"PQ aktiv" },
+    PR: { id:"PR-PC", type:"PC", state:"ready", text:"PR aktiv" },
+
+    send(from,to,data){
+        return { from,to,data,channel:this.channel,time:Date.now(),end:"OK" };
     }
+};
 
-    RUN8();
+function loadStatus(){
+    document.getElementById("sys-status").textContent =
+        "Channel: " + VEC.channel + "\n" +
+        "PX: " + VEC.PX.id + "\n" +
+        "PQ: " + VEC.PQ.id + "\n" +
+        "PR: " + VEC.PR.id;
+    
+    document.getElementById("pq-status").textContent = VEC.PQ.text;
+    document.getElementById("pr-status").textContent = VEC.PR.text;
+}
 
-    // Vector-Test
-    document.getElementById("testBtn").onclick = () => {
-        const packet = VEC.send("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
-        const result = VEC.recv(packet);
+function testVector(){
+    const packet = VEC.send("PQ-LAPTOP","PX-APPLE","Hallo PX");
+    alert("Vector-Test:\n" + JSON.stringify(packet,null,2));
+}
 
-        document.getElementById("run8").textContent =
-            "RUN8 aktiv\n" +
-            "Vector-Test:\n" +
-            JSON.stringify(result, null, 2);
-    };
+loadStatus();
 </script>
 
 </body>
